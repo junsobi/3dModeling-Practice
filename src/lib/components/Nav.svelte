@@ -29,8 +29,8 @@
 	<div class="px-4 flex items-center gap-10">
 		{#each links as link}
 			<div>
-				<a on:click={() => navigate(link.url)} class:text-xl={!isMobile ? 'text-2xl' : ''}
-					>{link.label}</a
+				<button on:click={() => navigate(link.url)} class:text-xl={!isMobile ? 'text-2xl' : ''}
+					>{link.label}</button
 				>
 			</div>
 		{/each}

@@ -22,9 +22,6 @@
 		controls.minDistance = 5; // 카메라 최소 범위
 		controls.maxDistance = 20; // 카메라 최대범위
 
-		document.body.appendChild(renderer.domElement);
-		// 랜더러를 돔에 올리는 기능(appendchild)
-
 		window.addEventListener(
 			'resize',
 			() => {
@@ -35,6 +32,9 @@
 			},
 			false
 		);
+
+		document.body.appendChild(renderer.domElement);
+		// 랜더러를 돔에 올리는 기능(appendchild)
 
 		const loader = new GLTFLoader();
 		//로더는 gltf파일로 만들어진
