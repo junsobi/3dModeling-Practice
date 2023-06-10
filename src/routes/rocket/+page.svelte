@@ -1,9 +1,8 @@
 <script>
-	import { onDestroy } from 'svelte';
 	import FullScreenWrapper from '$lib/components/FullScreenWrapper.svelte';
-	import Spaceboi from '$lib/components/Spaceboi.svelte';
+	import Rocket from '$lib/components/Rocket.svelte';
 	import Nav from '$lib/components/nav.svelte';
-	import '../app.css';
+	import '../../app.css';
 
 	const instructions = [
 		{ imageSrc: 'images/scroll-white.png', text: '스크롤하여 확대/축소해보세요' },
@@ -12,7 +11,7 @@
 </script>
 
 <Nav />
-<Spaceboi />
+<Rocket />
 <FullScreenWrapper>
 	<div class="flex flex-col gap-10">
 		<p class="text-3xl text-gray-50 z-10">반가워요!</p>
