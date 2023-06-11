@@ -3,9 +3,8 @@
 	import { onMount } from 'svelte';
 	import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 	import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-
 	import * as THREE from 'three';
-
+	import { playing } from '$lib/store/store';
 	let scene,
 		camera,
 		renderer,
@@ -14,8 +13,36 @@
 		loaderElement,
 		speechBubbleTimeout,
 		opacityTimeout;
-	// scene은 3d 객체 빛을 담는 공간, 카메라는 환경을 어떻게볼것인지 정의 , renderer는 3d를 그리는역할, controls는 카메라 컨트롤
 
+	// scene은 3d 객체 빛을 담는 공간, 카메라는 환경을 어떻게볼것인지 정의 , renderer는 3d를 그리는역할, controls는 카메라 컨트롤
+	$: {
+		console.log($playing);
+	}
+
+	let isScaling = true;
+	let scale = 0.01;
+
+	function animate() {
+		requestAnimationFrame(animate);
+
+		spaceboi.rotation.y += $playing ? 0.001 : 0;
+
+		if (spaceboi) {
+			// spaceboi가 정의된 경우에만 회전
+
+			if (isScaling) {
+				// spaceboi가 아직 스케일링 중인 경우
+				if (scale < 1) {
+					scale += 0.01;
+					spaceboi.scale.set(scale, scale, scale);
+				} else {
+					isScaling = false; // 스케일이 1 이상이면 더 이상 스케일링하지 않음
+				}
+			}
+		}
+
+		renderer.render(scene, camera);
+	}
 	onMount(() => {
 		//dom이 완전히 로드된후에 three.js가 작동되도록 온마운트에 담는다
 		scene = new THREE.Scene();
@@ -57,7 +84,10 @@
 				spaceboi = gltf.scene; // 로드한 모델을 spaceboi 변수에 저장
 
 				scene.add(spaceboi); // 로드한 모델을 scene에 추가
-				animate();
+
+				if ($playing) {
+					animate();
+				}
 				loaderElement.style.opacity = '0';
 			},
 			(progress) => {
@@ -70,9 +100,6 @@
 		camera.position.set(4, 10, 5);
 		camera.lookAt(0, 0, 0);
 
-		let isScaling = true;
-		let scale = 0.01;
-
 		function onDocumentMouseClick(event) {
 			event.preventDefault();
 
@@ -81,48 +108,50 @@
 
 			raycaster.setFromCamera(mouse, camera);
 			let intersects = raycaster.intersectObjects(scene.children, true);
-
+			console.log(intersects);
 			if (intersects.length > 0) {
-				let firstObject = intersects[0].object;
-				console.log(firstObject);
-				if (
-					firstObject.name !== 'Cube_Material001_0' &&
-					firstObject.name !== 'waves_Material002_0'
-				) {
-					let newMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
-					firstObject.material = newMaterial;
-					firstObject.material.color.set(Math.random() * 0xffffff);
-				}
+				for (let i = 0; i < Math.min(intersects.length, 2); i++) {
+					let currentObject = intersects[i].object;
 
-				if (firstObject.name === 'body_Material001_0') {
-					// 머테리얼 색상 변경
+					if (
+						currentObject.name !== 'Cube_Material001_0' &&
+						currentObject.name !== 'waves_Material002_0'
+					) {
+						let newMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
+						currentObject.material = newMaterial;
+						currentObject.material.color.set(Math.random() * 0xffffff);
+					}
 
-					let worldPosition = new THREE.Vector3();
-					firstObject.getWorldPosition(worldPosition);
-					let screenPosition = worldPosition.project(camera);
+					if (currentObject.name === 'body_Material001_0') {
+						// 머테리얼 색상 변경
 
-					let speechBubble = document.getElementById('speech-bubble');
-					speechBubble.style.left = `${((screenPosition.x + 1) / 2) * window.innerWidth}px`;
-					speechBubble.style.top = `${(-(screenPosition.y - 0.8) / 2) * window.innerHeight}px`;
+						let worldPosition = new THREE.Vector3();
+						currentObject.getWorldPosition(worldPosition);
+						let screenPosition = worldPosition.project(camera);
 
-					let randomPhrase = Phrases[Math.floor(Math.random() * Phrases.length)];
-					speechBubble.textContent = randomPhrase;
+						let speechBubble = document.getElementById('speech-bubble');
+						speechBubble.style.left = `${((screenPosition.x + 1) / 2) * window.innerWidth}px`;
+						speechBubble.style.top = `${(-(screenPosition.y - 0.8) / 2) * window.innerHeight}px`;
 
-					speechBubble.style.display = 'block';
-					clearTimeout(speechBubbleTimeout);
-					clearTimeout(opacityTimeout);
+						let randomPhrase = Phrases[Math.floor(Math.random() * Phrases.length)];
+						speechBubble.textContent = randomPhrase;
 
-					setTimeout(() => {
-						speechBubble.style.opacity = '1';
-					}, 0);
+						speechBubble.style.display = 'block';
+						clearTimeout(speechBubbleTimeout);
+						clearTimeout(opacityTimeout);
 
-					opacityTimeout = setTimeout(() => {
-						speechBubble.style.opacity = '0';
+						setTimeout(() => {
+							speechBubble.style.opacity = '1';
+						}, 0);
 
-						speechBubbleTimeout = setTimeout(() => {
-							speechBubble.style.display = 'none';
-						}, 500);
-					}, 4000);
+						opacityTimeout = setTimeout(() => {
+							speechBubble.style.opacity = '0';
+
+							speechBubbleTimeout = setTimeout(() => {
+								speechBubble.style.display = 'none';
+							}, 500);
+						}, 4000);
+					}
 				}
 			}
 		}
@@ -130,27 +159,7 @@
 		const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 		scene.add(ambientLight);
 		window.addEventListener('click', onDocumentMouseClick, false);
-
-		function animate() {
-			requestAnimationFrame(animate);
-
-			if (spaceboi) {
-				// spaceboi가 정의된 경우에만 회전
-				spaceboi.rotation.y += 0.001;
-
-				if (isScaling) {
-					// spaceboi가 아직 스케일링 중인 경우
-					if (scale < 1) {
-						scale += 0.01;
-						spaceboi.scale.set(scale, scale, scale);
-					} else {
-						isScaling = false; // 스케일이 1 이상이면 더 이상 스케일링하지 않음
-					}
-				}
-			}
-
-			renderer.render(scene, camera);
-		}
+		console.log($playing);
 
 		// 로딩바가 사라질 때 이벤트 추가
 		loaderElement.addEventListener('transitionend', () => {
