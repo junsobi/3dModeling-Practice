@@ -84,16 +84,27 @@
 
 			if (intersects.length > 0) {
 				let firstObject = intersects[0].object;
+				console.log(firstObject);
+				if (
+					firstObject.name !== 'Cube_Material001_0' &&
+					firstObject.name !== 'waves_Material002_0'
+				) {
+					let newMaterial = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
+					firstObject.material = newMaterial;
+					firstObject.material.color.set(Math.random() * 0xffffff);
+				}
+
 				if (firstObject.name === 'body_Material001_0') {
+					// 머테리얼 색상 변경
+
 					let worldPosition = new THREE.Vector3();
 					firstObject.getWorldPosition(worldPosition);
 					let screenPosition = worldPosition.project(camera);
 
 					let speechBubble = document.getElementById('speech-bubble');
 					speechBubble.style.left = `${((screenPosition.x + 1) / 2) * window.innerWidth}px`;
-					speechBubble.style.top = `${(-(screenPosition.y - 0.1) / 2) * window.innerHeight}px`;
+					speechBubble.style.top = `${(-(screenPosition.y - 0.8) / 2) * window.innerHeight}px`;
 
-					// 정해진 여러 문구 중 랜덤으로 하나를 선택
 					let randomPhrase = Phrases[Math.floor(Math.random() * Phrases.length)];
 					speechBubble.textContent = randomPhrase;
 
@@ -103,18 +114,21 @@
 
 					setTimeout(() => {
 						speechBubble.style.opacity = '1';
-					}, 0); // 말풍선 활성화 후 0초 뒤에 opacity를 1로 변경
+					}, 0);
 
 					opacityTimeout = setTimeout(() => {
 						speechBubble.style.opacity = '0';
 
 						speechBubbleTimeout = setTimeout(() => {
 							speechBubble.style.display = 'none';
-						}, 500); // 퇴장 애니메이션 시간(0.5초)
-					}, 2000); // 말풍선 활성화 시간(2초)
+						}, 500);
+					}, 4000);
 				}
 			}
 		}
+
+		const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+		scene.add(ambientLight);
 		window.addEventListener('click', onDocumentMouseClick, false);
 
 		function animate() {
