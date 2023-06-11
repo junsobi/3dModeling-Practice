@@ -12,7 +12,7 @@
 	onMount(() => {
 		//dom이 완전히 로드된후에 three.js가 작동되도록 온마운트에 담는다
 		scene = new THREE.Scene();
-		camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
+		camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
 		renderer = new THREE.WebGLRenderer({ antialias: true });
 		//scene, camera, renderer를 초기화, perspectivecamera : 시야각, 화면비율, 근접클리핑평면, 원근클리핑평면
 		renderer.setPixelRatio(window.devicePixelRatio);

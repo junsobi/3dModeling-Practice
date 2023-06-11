@@ -1,10 +1,19 @@
 <script>
+	import Phrases from './PHRASES';
 	import { onMount } from 'svelte';
 	import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 	import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
 	import * as THREE from 'three';
 
-	let scene, camera, renderer, spaceboi, controls, loaderElement;
+	let scene,
+		camera,
+		renderer,
+		spaceboi,
+		controls,
+		loaderElement,
+		speechBubbleTimeout,
+		opacityTimeout;
 	// scene은 3d 객체 빛을 담는 공간, 카메라는 환경을 어떻게볼것인지 정의 , renderer는 3d를 그리는역할, controls는 카메라 컨트롤
 
 	onMount(() => {
@@ -21,6 +30,9 @@
 		controls.maxPolarAngle = Math.PI / 2; // y축 위로 못움직이게함
 		controls.minDistance = 5; // 카메라 최소 범위
 		controls.maxDistance = 20; // 카메라 최대범위
+
+		let raycaster = new THREE.Raycaster();
+		let mouse = new THREE.Vector2();
 
 		window.addEventListener(
 			'resize',
@@ -43,6 +55,7 @@
 			'/3dModeling/scene.gltf', // GLTF 파일 위치
 			(gltf) => {
 				spaceboi = gltf.scene; // 로드한 모델을 spaceboi 변수에 저장
+
 				scene.add(spaceboi); // 로드한 모델을 scene에 추가
 				animate();
 				loaderElement.style.opacity = '0';
@@ -56,10 +69,54 @@
 
 		camera.position.set(4, 10, 5);
 		camera.lookAt(0, 0, 0);
-		console.log(camera.position);
 
 		let isScaling = true;
 		let scale = 0.01;
+
+		function onDocumentMouseClick(event) {
+			event.preventDefault();
+
+			mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+			mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+			raycaster.setFromCamera(mouse, camera);
+			let intersects = raycaster.intersectObjects(scene.children, true);
+
+			if (intersects.length > 0) {
+				let firstObject = intersects[0].object;
+				if (firstObject.name === 'body_Material001_0') {
+					let worldPosition = new THREE.Vector3();
+					firstObject.getWorldPosition(worldPosition);
+					let screenPosition = worldPosition.project(camera);
+
+					let speechBubble = document.getElementById('speech-bubble');
+					speechBubble.style.left = `${((screenPosition.x + 1) / 2) * window.innerWidth}px`;
+					speechBubble.style.top = `${(-(screenPosition.y - 0.1) / 2) * window.innerHeight}px`;
+
+					// 정해진 여러 문구 중 랜덤으로 하나를 선택
+					let randomPhrase = Phrases[Math.floor(Math.random() * Phrases.length)];
+					speechBubble.textContent = randomPhrase;
+
+					speechBubble.style.display = 'block';
+					clearTimeout(speechBubbleTimeout);
+					clearTimeout(opacityTimeout);
+
+					setTimeout(() => {
+						speechBubble.style.opacity = '1';
+					}, 0); // 말풍선 활성화 후 0초 뒤에 opacity를 1로 변경
+
+					opacityTimeout = setTimeout(() => {
+						speechBubble.style.opacity = '0';
+
+						speechBubbleTimeout = setTimeout(() => {
+							speechBubble.style.display = 'none';
+						}, 500); // 퇴장 애니메이션 시간(0.5초)
+					}, 2000); // 말풍선 활성화 시간(2초)
+				}
+			}
+		}
+		window.addEventListener('click', onDocumentMouseClick, false);
+
 		function animate() {
 			requestAnimationFrame(animate);
 
@@ -91,6 +148,12 @@
 </script>
 
 <div id="loader" bind:this={loaderElement}>loading...</div>
+<div
+	id="speech-bubble"
+	style="opacity: 0; display: none; position: absolute; padding: 10px; background-color: white; border-radius: 5px; transition: opacity 0.5s; max-width: 600px;"
+>
+	Hello!
+</div>
 
 <style>
 	#loader {
