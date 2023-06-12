@@ -32,14 +32,14 @@
 	function animateRocket() {
 		if (rocket) {
 			isMovingUp =
-				rocket.position.y >= initialYPosition + ($playing ? 100 : 0)
+				rocket.position.y >= initialYPosition + 100
 					? false
-					: rocket.position.y <= initialYPosition - ($playing ? 100 : 0)
+					: rocket.position.y <= initialYPosition - 100
 					? true
 					: isMovingUp;
 			rocket.position.y += isMovingUp ? ($playing ? 3 : 0) : $playing ? -3 : 0;
 
-			rocket.rotation.y += 0.05;
+			rocket.rotation.y += $playing ? 0.05 : 0;
 		}
 	}
 
@@ -48,7 +48,7 @@
 		for (let i = 0; i < position.count; i++) {
 			let factor = i / position.count;
 			let easingFactor = Math.sin(factor * Math.PI);
-			let y = Math.sin(factor * 10 * Math.PI + time) * 10 * easingFactor;
+			let y = Math.sin(factor * 10 * Math.PI + time) * ($playing ? 10 : 0) * easingFactor;
 			position.setZ(i, y);
 		}
 		position.needsUpdate = true;
