@@ -38,6 +38,9 @@
 >
 	<slot />
 	<!-- 자식 컴포넌트가 들어갈 위치 -->
+
+
+
 </div>
 {#if buttonRendered}
 	<button
