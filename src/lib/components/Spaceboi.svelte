@@ -22,13 +22,9 @@
 	let isScaling = true;
 	let scale = 0.01;
 
-	function animate() {
-		requestAnimationFrame(animate);
-
-		spaceboi.rotation.y += $playing ? 0.001 : 0;
-
-		if (isScaling) {
-			// spaceboi가 아직 스케일링 중인 경우
+	function animateCloseUp() {
+		if (spaceboi && isScaling) {
+			// spaecboi 아직 스케일링 중인 경우
 			if (scale < 1) {
 				scale += 0.01;
 				spaceboi.scale.set(scale, scale, scale);
@@ -36,9 +32,14 @@
 				isScaling = false; // 스케일이 1 이상이면 더 이상 스케일링하지 않음
 			}
 		}
-
-		renderer.render(scene, camera);
 	}
+
+	function animateSpaceboi() {
+		if (spaceboi) {
+			spaceboi.rotation.y += $playing ? 0.001 : 0;
+		}
+	}
+
 	onMount(() => {
 		//dom이 완전히 로드된후에 three.js가 작동되도록 온마운트에 담는다
 		scene = new THREE.Scene();
@@ -81,9 +82,6 @@
 
 				scene.add(spaceboi); // 로드한 모델을 scene에 추가
 
-				if ($playing) {
-					animate();
-				}
 				loaderElement.style.opacity = '0';
 			},
 			(progress) => {
@@ -163,6 +161,14 @@
 				loaderElement.style.display = 'none';
 			}
 		});
+
+		function animate() {
+			requestAnimationFrame(animate);
+			animateSpaceboi();
+			animateCloseUp();
+			renderer.render(scene, camera);
+		}
+		animate();
 	});
 </script>
 
