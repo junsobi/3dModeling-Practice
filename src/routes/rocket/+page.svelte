@@ -11,7 +11,7 @@
 		{ complete: true, text: '로켓 돌려보기' },
 		{ complete: true, text: '로켓 위아래로 움직이기' },
 		{ complete: true, text: '구만들어서 돌리기' },
-		{ complete: false, text: '일시정지 기능구현' },
+		{ complete: true, text: '일시정지 기능구현' },
 		{ complete: false, text: '속도바 기능 구현' }
 	];
 </script>
