@@ -68,7 +68,7 @@
 		const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 		scene.add(ambientLight);
 
-		const circleGeometry = new THREE.CircleGeometry(500, 200); // 반지름과 세그먼트
+		const circleGeometry = new THREE.CircleGeometry(500, 100); // 반지름과 세그먼트
 		const color = new THREE.Color('#69b4ff');
 		const circleMaterial = new THREE.MeshLambertMaterial({ color: color });
 
@@ -93,15 +93,17 @@
 			}
 
 			let position = circleMesh.geometry.attributes.position;
-
+			//원꼭짓점들의 위치값 배열
 			for (let i = 0; i < position.count; i++) {
 				let factor = i / position.count;
 				let easingFactor = Math.sin(factor * Math.PI);
-				let y = Math.sin(factor * 2 * Math.PI + time) * 7 * easingFactor;
+				// 원이 쪼개지는 현상을 줄이기위해 천천히 시작-가속-천천히 감속 패턴을 주기위해
+				let y = Math.sin(factor * 10 * Math.PI + time) * 10 * easingFactor;
+				//파동 속도를 이곳에서 제어한다
 				position.setZ(i, y);
 			}
 			position.needsUpdate = true;
-
+			//위치들이 변경되었음을 알리기위한 코드
 			renderer.render(scene, camera);
 		}
 
