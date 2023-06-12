@@ -3,11 +3,56 @@
 	import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 	import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 	import * as THREE from 'three';
+	import { playing } from '$lib/store/store';
 
-	let scene, camera, renderer, rocket, controls, loaderElement;
+	let scene, camera, renderer, rocket, circleMesh, controls, loaderElement;
 	let isMovingUp = true;
 	let initialYPosition = 0;
 	// scene은 3d 객체 빛을 담는 공간, 카메라는 환경을 어떻게볼것인지 정의 , renderer는 3d를 그리는역할
+
+	$: {
+		console.log($playing);
+	}
+
+	let isScaling = true;
+	let scale = 0.01;
+
+	function animateCloseUp() {
+		if (rocket && isScaling) {
+			// rocket 아직 스케일링 중인 경우
+			if (scale < 1) {
+				scale += 0.01;
+				rocket.scale.set(scale, scale, scale);
+			} else {
+				isScaling = false; // 스케일이 1 이상이면 더 이상 스케일링하지 않음
+			}
+		}
+	}
+
+	function animateRocket() {
+		if (rocket) {
+			isMovingUp =
+				rocket.position.y >= initialYPosition + ($playing ? 100 : 0)
+					? false
+					: rocket.position.y <= initialYPosition - ($playing ? 100 : 0)
+					? true
+					: isMovingUp;
+			rocket.position.y += isMovingUp ? ($playing ? 3 : 0) : $playing ? -3 : 0;
+
+			rocket.rotation.y += 0.05;
+		}
+	}
+
+	function animateCircle(time, circleMesh) {
+		let position = circleMesh.geometry.attributes.position;
+		for (let i = 0; i < position.count; i++) {
+			let factor = i / position.count;
+			let easingFactor = Math.sin(factor * Math.PI);
+			let y = Math.sin(factor * 10 * Math.PI + time) * 10 * easingFactor;
+			position.setZ(i, y);
+		}
+		position.needsUpdate = true;
+	}
 
 	onMount(() => {
 		//dom이 완전히 로드된후에 three.js가 작동되도록 온마운트에 담는다
@@ -46,9 +91,8 @@
 			'/3dModeling/rocket.gltf', // GLTF 파일 위치
 			(gltf) => {
 				rocket = gltf.scene; // 로드한 모델을 rocket 변수에 저장
-
-				scene.add(rocket); // 로드한 모델을 scene에 추가
 				loaderElement.style.opacity = '0';
+				scene.add(rocket); // 로드한 모델을 scene에 추가
 
 				initialYPosition = rocket.position.y; // 초기 Y 위치 저장
 			},
@@ -80,33 +124,11 @@
 		function animate() {
 			requestAnimationFrame(animate);
 			time += 0.05;
-			if (rocket) {
-				isMovingUp =
-					rocket.position.y >= initialYPosition + 100
-						? false
-						: rocket.position.y <= initialYPosition - 100
-						? true
-						: isMovingUp;
-				rocket.position.y += isMovingUp ? 3 : -3;
-
-				rocket.rotation.y += 0.05;
-			}
-
-			let position = circleMesh.geometry.attributes.position;
-			//원꼭짓점들의 위치값 배열
-			for (let i = 0; i < position.count; i++) {
-				let factor = i / position.count;
-				let easingFactor = Math.sin(factor * Math.PI);
-				// 원이 쪼개지는 현상을 줄이기위해 천천히 시작-가속-천천히 감속 패턴을 주기위해
-				let y = Math.sin(factor * 10 * Math.PI + time) * 10 * easingFactor;
-				//파동 속도를 이곳에서 제어한다
-				position.setZ(i, y);
-			}
-			position.needsUpdate = true;
-			//위치들이 변경되었음을 알리기위한 코드
+			animateRocket();
+			animateCloseUp();
+			animateCircle(time, circleMesh);
 			renderer.render(scene, camera);
 		}
-
 		animate();
 
 		loaderElement.addEventListener('transitionend', () => {

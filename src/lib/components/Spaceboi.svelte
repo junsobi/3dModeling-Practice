@@ -27,17 +27,13 @@
 
 		spaceboi.rotation.y += $playing ? 0.001 : 0;
 
-		if (spaceboi) {
-			// spaceboi가 정의된 경우에만 회전
-
-			if (isScaling) {
-				// spaceboi가 아직 스케일링 중인 경우
-				if (scale < 1) {
-					scale += 0.01;
-					spaceboi.scale.set(scale, scale, scale);
-				} else {
-					isScaling = false; // 스케일이 1 이상이면 더 이상 스케일링하지 않음
-				}
+		if (isScaling) {
+			// spaceboi가 아직 스케일링 중인 경우
+			if (scale < 1) {
+				scale += 0.01;
+				spaceboi.scale.set(scale, scale, scale);
+			} else {
+				isScaling = false; // 스케일이 1 이상이면 더 이상 스케일링하지 않음
 			}
 		}
 
