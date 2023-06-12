@@ -47,7 +47,8 @@
 		renderer = new THREE.WebGLRenderer({ antialias: true });
 		//scene, camera, renderer를 초기화, perspectivecamera : 시야각, 화면비율, 근접클리핑평면, 원근클리핑평면
 		renderer.setPixelRatio(window.devicePixelRatio);
-		renderer.setSize(window.innerWidth, window.innerHeight);
+		const navHeight = 30;
+		renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
 		// 랜더링 사이즈
 		controls = new OrbitControls(camera, renderer.domElement);
 		controls.minPolarAngle = 0; // 카메라를 y축 밑으로 못가게함
@@ -61,10 +62,11 @@
 		window.addEventListener(
 			'resize',
 			() => {
-				camera.aspect = window.innerWidth / window.innerHeight;
+				const navHeight = 30;
+				camera.aspect = window.innerWidth / (window.innerHeight - navHeight);
 				camera.updateProjectionMatrix();
 
-				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
 			},
 			false
 		);
