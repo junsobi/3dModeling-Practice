@@ -1,4 +1,6 @@
-### 3d 모델링 연습프로젝트
+### 배포 주소 : http://genuiofristproject.s3-website.ap-northeast-2.amazonaws.com/
+
+# 3d 모델링 연습프로젝트
 
 ## 로켓을 띄우고 돌리는걸 목표로 한다.
 
