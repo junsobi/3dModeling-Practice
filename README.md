@@ -21,6 +21,10 @@ with sveltkit three.js tailwindcss
 9. 말풍선을 3d화
 10. 로그인 페이지가 완료되면 회원정보 받아서 개인화된 조언 제공(날씨, 운세 등)
 
+![스크린샷 2023-06-12 오전 10 40 16](https://github.com/junsobi/3dModeling-Practice/assets/127650045/84898d58-9bd2-42d9-8c5b-a66d7f6d369e)
+![스크린샷 2023-06-12 오전 10 42 26](https://github.com/junsobi/3dModeling-Practice/assets/127650045/fd77a602-be3b-4bfc-ad78-71087f7ab7fc)
+
+
 ## 2. Rocket.
 
 1. 모델을 어떻게든 출력 (gltf 로더 사용) ✅
@@ -30,3 +34,6 @@ with sveltkit three.js tailwindcss
 5. 구 만들어서 돌리기 ✅
 6. 일시정지 기능 구현
 7. 속도바 기능 구현
+
+![스크린샷 2023-06-12 오전 10 42 53](https://github.com/junsobi/3dModeling-Practice/assets/127650045/a0ca5491-f6e7-4d1e-ac88-fc5230fc4d1c)
+
