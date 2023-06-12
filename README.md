@@ -2,7 +2,9 @@
 
 # 3d 모델링 연습프로젝트
 
-with sveltkit three.js tailwindcss
+with / sveltkit three.js tailwindcss
+반응형 웹페이지 구성을 목표로한다.
+
 
 ## 1.Spaceboi
 
