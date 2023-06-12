@@ -4,15 +4,12 @@
 	import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 	import * as THREE from 'three';
 	import { playing } from '$lib/store/store';
+	import { initScene } from './sceneInit.js';
 
 	let scene, camera, renderer, rocket, circleMesh, controls, loaderElement;
 	let isMovingUp = true;
 	let initialYPosition = 0;
 	// scene은 3d 객체 빛을 담는 공간, 카메라는 환경을 어떻게볼것인지 정의 , renderer는 3d를 그리는역할
-
-	$: {
-		console.log($playing);
-	}
 
 	let isScaling = true;
 	let scale = 0.01;
@@ -55,22 +52,13 @@
 	}
 
 	onMount(() => {
-		//dom이 완전히 로드된후에 three.js가 작동되도록 온마운트에 담는다
-		scene = new THREE.Scene();
-		camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
-		renderer = new THREE.WebGLRenderer({ antialias: true });
-		//scene, camera, renderer를 초기화, perspectivecamera : 시야각, 화면비율, 근접클리핑평면, 원근클리핑평면
-		renderer.setPixelRatio(window.devicePixelRatio);
-		const navHeight = 30;
-		renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
-		// 랜더링 사이즈
-
-		controls = new OrbitControls(camera, renderer.domElement);
-		controls.minPolarAngle = 0; // 카메라를 y축 밑으로 못가게함
-		controls.maxPolarAngle = Math.PI / 2; // y축 위로 못움직이게함
-		controls.minDistance = 100; // 카메라 최소 범위
-		controls.maxDistance = 500; // 카메라 최대범위
-
+		({ scene, camera, renderer, controls } = initScene({
+			navHeight: 30,
+			minDistance: 100,
+			maxDistance: 500,
+			fov: 75
+		}));
+		//초기세팅관련된 파일
 		window.addEventListener(
 			'resize',
 			() => {
