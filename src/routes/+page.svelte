@@ -8,7 +8,7 @@
 	const instructions = [
 		{ imageSrc: 'images/left-click-white.png', text: '별과 소년을 눌러보세요' },
 		{ imageSrc: 'images/scroll-white.png', text: '스크롤하여 확대/축소해보세요' },
-		{ imageSrc: 'images/left-click-white.png', text: '(+ctrl)드래그하여 탐구하세요' },
+		{ imageSrc: 'images/left-click-white.png', text: '(+우클릭)드래그하여 탐구하세요' },
 		{ imageSrc: 'images/pause-button-white.png', text: '좌상단에 일시정지가 있어요' }
 	];
 </script>
