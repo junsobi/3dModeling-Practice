@@ -5,6 +5,7 @@
 	import * as THREE from 'three';
 	import { playing } from '$lib/store/store';
 	import { initScene } from './sceneInit.js';
+	import { animateCloseUp } from './animations.js';
 
 	let scene, camera, renderer, rocket, circleMesh, controls, loaderElement;
 	let isMovingUp = true;
@@ -13,18 +14,6 @@
 
 	let isScaling = true;
 	let scale = 0.01;
-
-	function animateCloseUp() {
-		if (rocket && isScaling) {
-			// rocket 아직 스케일링 중인 경우
-			if (scale < 1) {
-				scale += 0.01;
-				rocket.scale.set(scale, scale, scale);
-			} else {
-				isScaling = false; // 스케일이 1 이상이면 더 이상 스케일링하지 않음
-			}
-		}
-	}
 
 	function animateRocket() {
 		if (rocket) {
@@ -114,7 +103,7 @@
 			requestAnimationFrame(animate);
 			time += 0.05;
 			animateRocket();
-			animateCloseUp();
+			[scale, isScaling] = animateCloseUp(rocket, scale, isScaling);
 			animateCircle(time, circleMesh);
 			renderer.render(scene, camera);
 		}
@@ -129,6 +118,7 @@
 </script>
 
 <div id="loader" bind:this={loaderElement}>loading...</div>
+<canvas id="canvas" />
 
 <style>
 	#loader {

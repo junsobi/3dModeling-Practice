@@ -1,7 +1,7 @@
 <script>
 	import FullScreenWrapper from '$lib/components/FullScreenWrapper.svelte';
 	import Spaceboi from '$lib/components/Spaceboi.svelte';
-	import Nav from '$lib/components/nav.svelte';
+	import Nav from '$lib/components/Nav.svelte';
 	import '../app.css';
 	import ToggleButton from '../lib/components/ToggleButton.svelte';
 

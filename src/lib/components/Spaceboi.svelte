@@ -6,7 +6,7 @@
 	import * as THREE from 'three';
 	import { playing } from '$lib/store/store';
 	import { initScene } from './sceneInit.js';
-
+	import { animateCloseUp, animateSpaceboi } from './animations.js';
 	let scene,
 		camera,
 		renderer,
@@ -20,24 +20,6 @@
 
 	let isScaling = true;
 	let scale = 0.01;
-
-	function animateCloseUp() {
-		if (spaceboi && isScaling) {
-			// spaecboi 아직 스케일링 중인 경우
-			if (scale < 1) {
-				scale += 0.01;
-				spaceboi.scale.set(scale, scale, scale);
-			} else {
-				isScaling = false; // 스케일이 1 이상이면 더 이상 스케일링하지 않음
-			}
-		}
-	}
-
-	function animateSpaceboi() {
-		if (spaceboi) {
-			spaceboi.rotation.y += $playing ? 0.001 : 0;
-		}
-	}
 
 	onMount(() => {
 		({ scene, camera, renderer, controls } = initScene({
@@ -157,8 +139,8 @@
 
 		function animate() {
 			requestAnimationFrame(animate);
-			animateSpaceboi();
-			animateCloseUp();
+			animateSpaceboi(spaceboi, $playing);
+			[scale, isScaling] = animateCloseUp(spaceboi, scale, isScaling);
 			renderer.render(scene, camera);
 		}
 		animate();
@@ -166,6 +148,7 @@
 </script>
 
 <div id="loader" bind:this={loaderElement}>loading...</div>
+<canvas id="canvas" />
 <div
 	id="speech-bubble"
 	style="opacity: 0; display: none; position: absolute; padding: 10px; background-color: white; border-radius: 5px; transition: opacity 0.5s; max-width: 600px;"

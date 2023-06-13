@@ -10,7 +10,10 @@ export function initScene({ navHeight = 30, minDistance = 100, maxDistance = 500
 		0.1,
 		1000
 	);
-	const renderer = new THREE.WebGLRenderer({ antialias: true });
+	let renderer = new THREE.WebGLRenderer({
+		canvas: document.querySelector('#canvas'),
+		antialias: true
+	});
 
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
@@ -23,3 +26,6 @@ export function initScene({ navHeight = 30, minDistance = 100, maxDistance = 500
 
 	return { scene, camera, renderer, controls };
 }
+
+//renderer
+// const canvas=document

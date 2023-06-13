@@ -2,15 +2,10 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
-	// function navigate(url) {
-	// 	goto(url);
-	// }
-	function navigate(url) {
-		window.location.href = url;
-	}
 	const links = [
 		{ label: 'Spaceboi', url: '/' },
-		{ label: 'Rocket', url: '/rocket' }
+		{ label: 'Rocket', url: '/rocket' },
+		{ label: 'login', url: '/login' }
 	];
 
 	let isMobile = false;
@@ -29,7 +24,7 @@
 	<div class="px-4 flex items-center gap-10">
 		{#each links as link}
 			<div>
-				<button on:click={() => navigate(link.url)} class:text-xl={!isMobile ? 'text-2xl' : ''}
+				<button on:click={() => goto(link.url)} class:text-xl={!isMobile ? 'text-2xl' : ''}
 					>{link.label}</button
 				>
 			</div>

@@ -1,7 +1,5 @@
-export function animateCloseUp(object) {
-	let scale = 0.01;
-	let isScaling = true;
-
+// animations.js
+export function animateCloseUp(object, scale, isScaling) {
 	if (object && isScaling) {
 		if (scale < 1) {
 			scale += 0.01;
@@ -10,6 +8,7 @@ export function animateCloseUp(object) {
 			isScaling = false;
 		}
 	}
+	return [scale, isScaling];
 }
 
 export function animateRocket(object, initialYPosition, $playing) {
@@ -31,8 +30,8 @@ export function animateCircle(time, circleMesh, $playing) {
 	position.needsUpdate = true;
 }
 
-export function animateSpaceboi(spaceboi, $playing) {
+export function animateSpaceboi(spaceboi, playing) {
 	if (spaceboi) {
-		spaceboi.rotation.y += $playing ? 0.001 : 0;
+		spaceboi.rotation.y += playing ? 0.001 : 0;
 	}
 }
