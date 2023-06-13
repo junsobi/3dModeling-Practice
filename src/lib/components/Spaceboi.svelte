@@ -2,7 +2,6 @@
 	import Phrases from './PHRASES';
 	import { onMount } from 'svelte';
 	import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-	import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 	import * as THREE from 'three';
 	import { playing } from '$lib/store/store';
 	import { initScene } from './sceneInit.js';
@@ -23,7 +22,6 @@
 
 	onMount(() => {
 		({ scene, camera, renderer, controls } = initScene({
-			navHeight: 30,
 			minDistance: 5,
 			maxDistance: 20,
 			fov: 50
@@ -36,10 +34,10 @@
 			'resize',
 			() => {
 				const navHeight = 30;
-				camera.aspect = window.innerWidth / (window.innerHeight - navHeight);
+				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 
-				renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
+				renderer.setSize(window.innerWidth, window.innerHeight);
 			},
 			false
 		);

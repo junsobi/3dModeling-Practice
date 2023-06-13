@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-export function initScene({ navHeight = 30, minDistance = 100, maxDistance = 500, fov = 100 }) {
+export function initScene({ minDistance = 100, maxDistance = 500, fov = 100 }) {
 	const scene = new THREE.Scene();
 	const camera = new THREE.PerspectiveCamera(
 		fov,
@@ -16,7 +16,7 @@ export function initScene({ navHeight = 30, minDistance = 100, maxDistance = 500
 	});
 
 	renderer.setPixelRatio(window.devicePixelRatio);
-	renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
+	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	const controls = new OrbitControls(camera, renderer.domElement);
 	controls.minPolarAngle = 0;
@@ -26,6 +26,3 @@ export function initScene({ navHeight = 30, minDistance = 100, maxDistance = 500
 
 	return { scene, camera, renderer, controls };
 }
-
-//renderer
-// const canvas=document

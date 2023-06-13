@@ -11,20 +11,28 @@ export function animateCloseUp(object, scale, isScaling) {
 	return [scale, isScaling];
 }
 
-export function animateRocket(object, initialYPosition, $playing) {
-	if (object) {
-		object.position.y +=
-			object.position.y >= initialYPosition + 100 ? ($playing ? 0 : -3) : $playing ? 3 : 0;
-		object.rotation.y += $playing ? 0.05 : 0;
+export function animateRocket(rocket, isMovingUp, initialYPosition, playing) {
+	if (rocket) {
+		isMovingUp =
+			rocket.position.y >= initialYPosition + 100
+				? false
+				: rocket.position.y <= initialYPosition - 100
+				? true
+				: isMovingUp;
+		rocket.position.y += isMovingUp ? (playing ? 3 : 0) : playing ? -3 : 0;
+
+		rocket.rotation.y += playing ? 0.05 : 0;
 	}
+
+	return isMovingUp; // 변경된 isMovingUp을 반환
 }
 
-export function animateCircle(time, circleMesh, $playing) {
+export function animateCircle(time, circleMesh, playing) {
 	let position = circleMesh.geometry.attributes.position;
 	for (let i = 0; i < position.count; i++) {
 		let factor = i / position.count;
 		let easingFactor = Math.sin(factor * Math.PI);
-		let y = Math.sin(factor * 10 * Math.PI + time) * ($playing ? 10 : 0) * easingFactor;
+		let y = Math.sin(factor * 10 * Math.PI + time) * (playing ? 10 : 0) * easingFactor;
 		position.setZ(i, y);
 	}
 	position.needsUpdate = true;

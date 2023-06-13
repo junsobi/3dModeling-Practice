@@ -4,8 +4,7 @@
 
 	const links = [
 		{ label: 'Spaceboi', url: '/' },
-		{ label: 'Rocket', url: '/rocket' },
-		{ label: 'login', url: '/login' }
+		{ label: 'Rocket', url: '/rocket' }
 	];
 
 	let isMobile = false;
@@ -20,7 +19,11 @@
 	});
 </script>
 
-<div class="h-16 bg-gray-900 text-white" style="height: 30px; background-color: #111827;">
+<div
+	id="navBar"
+	class="h-16 bg-gray-900 text-white"
+	style="height: 30px; background-color: #111827; z-index: 999;"
+>
 	<div class="px-4 flex items-center gap-10">
 		{#each links as link}
 			<div>
@@ -31,3 +34,10 @@
 		{/each}
 	</div>
 </div>
+
+<style>
+	#navBar {
+		position: fixed;
+		width: 100%;
+	}
+</style>

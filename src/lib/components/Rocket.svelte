@@ -5,40 +5,14 @@
 	import * as THREE from 'three';
 	import { playing } from '$lib/store/store';
 	import { initScene } from './sceneInit.js';
-	import { animateCloseUp } from './animations.js';
+	import { animateCloseUp, animateRocket, animateCircle } from './animations.js';
 
 	let scene, camera, renderer, rocket, circleMesh, controls, loaderElement;
+	// scene은 3d 객체 빛을 담는 공간, 카메라는 환경을 어떻게볼것인지 정의 , renderer는 3d를 그리는역할
 	let isMovingUp = true;
 	let initialYPosition = 0;
-	// scene은 3d 객체 빛을 담는 공간, 카메라는 환경을 어떻게볼것인지 정의 , renderer는 3d를 그리는역할
-
 	let isScaling = true;
 	let scale = 0.01;
-
-	function animateRocket() {
-		if (rocket) {
-			isMovingUp =
-				rocket.position.y >= initialYPosition + 100
-					? false
-					: rocket.position.y <= initialYPosition - 100
-					? true
-					: isMovingUp;
-			rocket.position.y += isMovingUp ? ($playing ? 3 : 0) : $playing ? -3 : 0;
-
-			rocket.rotation.y += $playing ? 0.05 : 0;
-		}
-	}
-
-	function animateCircle(time, circleMesh) {
-		let position = circleMesh.geometry.attributes.position;
-		for (let i = 0; i < position.count; i++) {
-			let factor = i / position.count;
-			let easingFactor = Math.sin(factor * Math.PI);
-			let y = Math.sin(factor * 10 * Math.PI + time) * ($playing ? 10 : 0) * easingFactor;
-			position.setZ(i, y);
-		}
-		position.needsUpdate = true;
-	}
 
 	onMount(() => {
 		({ scene, camera, renderer, controls } = initScene({
@@ -51,10 +25,10 @@
 		window.addEventListener(
 			'resize',
 			() => {
-				camera.aspect = window.innerWidth / (window.innerHeight - navHeight);
+				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
 
-				renderer.setSize(window.innerWidth, window.innerHeight - navHeight);
+				renderer.setSize(window.innerWidth, window.innerHeight);
 			},
 			false
 		);
@@ -102,9 +76,9 @@
 		function animate() {
 			requestAnimationFrame(animate);
 			time += 0.05;
-			animateRocket();
+			isMovingUp = animateRocket(rocket, isMovingUp, initialYPosition, $playing);
 			[scale, isScaling] = animateCloseUp(rocket, scale, isScaling);
-			animateCircle(time, circleMesh);
+			animateCircle(time, circleMesh, $playing);
 			renderer.render(scene, camera);
 		}
 		animate();
